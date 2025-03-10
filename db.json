@@ -1,0 +1,135 @@
+{
+  "categories": [
+    {
+      "id": 1,
+      "name": "Điện tử",
+      "image": "/images/laptop-dell-xps-13.jpg"
+    },
+    {
+      "id": 2,
+      "name": "Thời trang",
+      "image": "/images/laptop-dell-xps-13.jpg"
+    },
+    {
+      "id": 3,
+      "name": "Sách",
+      "image": "/images/laptop-dell-xps-13.jpg"
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "name": "Laptop Dell XPS 13",
+      "description": "Laptop siêu mỏng nhẹ, hiệu năng cao",
+      "price": 15000000,
+      "image": "/images/laptop-dell-xps-13.jpg",
+      "categoryId": 1,
+      "rating": 4.5
+    },
+    {
+      "id": 2,
+      "name": "iPhone 13 Pro",
+      "description": "Điện thoại thông minh cao cấp của Apple",
+      "price": 25000000,
+      "image": "/images/iphone-13-pro.jpg",
+      "categoryId": 1,
+      "rating": 4.8
+    },
+    {
+      "id": 3,
+      "name": "Áo thun Polo",
+      "description": "Áo thun nam Polo chất liệu cotton",
+      "price": 300000,
+      "image": "/images/ao-thun-polo.jpg",
+      "categoryId": 2,
+      "rating": 4.2
+    },
+    {
+      "id": 4,
+      "name": "Giày Nike Air Max",
+      "description": "Giày thể thao Nike Air Max thoải mái",
+      "price": 1200000,
+      "image": "/images/giay-nike-air-max.jpg",
+      "categoryId": 2,
+      "rating": 4.6
+    },
+    {
+      "id": 5,
+      "name": "Sách Lập trình ReactJS",
+      "description": "Sách hướng dẫn lập trình ReactJS từ cơ bản đến nâng cao",
+      "price": 250000,
+      "image": "/images/sach-reactjs.jpg",
+      "categoryId": 3,
+      "rating": 4.0
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "username": "user1",
+      "password": "password1",
+      "email": "user1@example.com"
+    },
+    {
+      "id": 2,
+      "username": "user2",
+      "password": "password2",
+      "email": "user2@example.com"
+    },
+    {
+      "id": 3,
+      "username": "user3",
+      "password": "password3",
+      "email": "user3@example.com"
+    },
+    {
+      "id": 4,
+      "username": "user4",
+      "password": "password4",
+      "email": "user4@example.com"
+    }
+  ],
+  "carts": [
+    {
+      "userId": 1,
+      "items": [
+        { "productId": 1, "quantity": 1 },
+        { "productId": 3, "quantity": 2 }
+      ]
+    },
+    {
+      "userId": 2,
+      "items": [{ "productId": 2, "quantity": 1 }]
+    },
+    {
+      "userId": 4,
+      "items": [{ "productId": 4, "quantity": 1 }]
+    }
+  ],
+  "reviews": [
+    {
+      "productId": 1,
+      "userId": 1,
+      "comment": "Sản phẩm tuyệt vời!",
+      "rating": 5
+    },
+    {
+      "productId": 1,
+      "userId": 2,
+      "comment": "Hiệu năng tốt, nhưng pin hơi yếu.",
+      "rating": 4
+    },
+    {
+      "productId": 2,
+      "userId": 3,
+      "comment": "Camera đỉnh cao!",
+      "rating": 5
+    },
+    {
+      "productId": 4,
+      "userId": 4,
+      "comment": "Đi rất êm chân.",
+      "rating": 5
+    }
+  ]
+}
