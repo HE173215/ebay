@@ -1,0 +1,79 @@
+src/
+├── assets/
+├── api/
+│   └── productsApi.ts
+├── configs/
+│   └── apiConfig.ts
+├── components/
+│   ├── auth/
+│   │   └── SignUpForm.tsx
+│   ├── payment/
+│   │   └── PaymentForm.tsx
+│   ├── common/
+│   │   └── Button.tsx
+│   └── products/
+│       ├── ProductList.tsx
+│       └── ProductCard.tsx
+├── contexts/
+│   └── ProductContext.tsx
+├── hooks/
+│   ├── auth/
+│   │   └── useAuth.ts
+│   ├── payment/
+│   │   └── usePayment.ts
+│   └── products/
+│       └── useProducts.ts
+├── layouts/
+│   ├── components/
+│   │   ├── Footer.tsx
+│   │   ├── Header.tsx
+│   │   ├── SubMenu.tsx
+│   │   └── TopMenu.tsx
+│   └── MainLayout.tsx
+├── lib/
+│   └── utils.ts
+├── services/
+│   └── productService.ts
+├── states/
+│   └── productState.ts
+├── utils/
+│   └── helpers.ts
+├── App.tsx
+└── index.tsx
+
+
+1. Điều chỉnh thư mục components/:
+
+Thêm thư mục products/ để chứa các thành phần liên quan đến sản phẩm:
+
+ProductList.tsx: Hiển thị danh sách sản phẩm.
+
+ProductCard.tsx: Hiển thị thông tin chi tiết của một sản phẩm.
+
+2. Tạo thư mục contexts/:
+
+Thêm thư mục contexts/ để chứa các context của ứng dụng:
+
+ProductContext.tsx: Quản lý trạng thái sản phẩm.
+
+3. Điều chỉnh thư mục hooks/:
+
+Thêm thư mục products/ để chứa các hook liên quan đến sản phẩm:
+
+useProducts.ts: Hook để lấy và quản lý danh sách sản phẩm.
+
+4. Tạo thư mục layouts/:
+
+Thêm thư mục layouts/ để chứa các thành phần bố cục của ứng dụng:
+
+MainLayout.tsx: Bố cục chính của ứng dụng, chứa Header, Footer, SubMenu, và TopMenu.
+
+components/: Chứa các thành phần con của bố cục:
+
+Header.tsx: Thành phần header của ứng dụng.
+
+Footer.tsx: Thành phần footer của ứng dụng.
+
+SubMenu.tsx: Thành phần submenu của ứng dụng.
+
+TopMenu.tsx: Thành phần top menu của ứng dụng.
