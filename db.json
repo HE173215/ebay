@@ -3,17 +3,17 @@
     {
       "id": 1,
       "name": "Điện tử",
-      "image": "/images/laptop-dell-xps-13.jpg"
+      "image": "/images/download.jpg"
     },
     {
       "id": 2,
       "name": "Thời trang",
-      "image": "/images/laptop-dell-xps-13.jpg"
+      "image": "/images/download.jpg"
     },
     {
       "id": 3,
       "name": "Sách",
-      "image": "/images/laptop-dell-xps-13.jpg"
+      "image": "/images/download.jpg"
     }
   ],
   "products": [
@@ -22,7 +22,7 @@
       "name": "Laptop Dell XPS 13",
       "description": "Laptop siêu mỏng nhẹ, hiệu năng cao",
       "price": 15000000,
-      "image": "/images/laptop-dell-xps-13.jpg",
+      "image": "/images/download.jpg",
       "categoryId": 1,
       "rating": 4.5
     },
@@ -31,7 +31,7 @@
       "name": "iPhone 13 Pro",
       "description": "Điện thoại thông minh cao cấp của Apple",
       "price": 25000000,
-      "image": "/images/iphone-13-pro.jpg",
+      "image": "/images/download.jpg",
       "categoryId": 1,
       "rating": 4.8
     },
@@ -40,7 +40,7 @@
       "name": "Áo thun Polo",
       "description": "Áo thun nam Polo chất liệu cotton",
       "price": 300000,
-      "image": "/images/ao-thun-polo.jpg",
+      "image": "/images/download.jpg",
       "categoryId": 2,
       "rating": 4.2
     },
@@ -49,7 +49,7 @@
       "name": "Giày Nike Air Max",
       "description": "Giày thể thao Nike Air Max thoải mái",
       "price": 1200000,
-      "image": "/images/giay-nike-air-max.jpg",
+      "image": "/images/download.jpg",
       "categoryId": 2,
       "rating": 4.6
     },
@@ -58,7 +58,7 @@
       "name": "Sách Lập trình ReactJS",
       "description": "Sách hướng dẫn lập trình ReactJS từ cơ bản đến nâng cao",
       "price": 250000,
-      "image": "/images/sach-reactjs.jpg",
+      "image": "/images/download.jpg",
       "categoryId": 3,
       "rating": 4.0
     }

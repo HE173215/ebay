@@ -5,8 +5,11 @@ import { FaHeart } from 'react-icons/fa';
 import Header from './includes/Header';
 import SubMenu from './includes/SubMenu';
 import Footer from './includes/Footer';
+import {Link} from "react-router-dom";
+import {useProduct} from "../context/ProductContext";
 
 const EbayHomepage = () => {
+    const { products, getImageUrl, formatPrice } = useProduct();
     return (
         <div className="ebay-homepage">
             {/* Header (includes TopNav) */}
@@ -38,14 +41,21 @@ const EbayHomepage = () => {
             {/* Popular Categories */}
             <Container className="mb-5">
                 <h2 className="mb-4">Explore Popular Categories</h2>
-                <Row>
-                    {['Luxury', 'Sneakers', 'P&A', 'Refurbished', 'Trading cards', 'Pre-loved Luxury', 'Toys'].map((category, index) => (
-                        <Col key={index} xs={6} sm={4} md={3} lg={1} className="text-center mb-4">
-                            <div className="category-circle bg-light rounded-circle mx-auto mb-2" style={{ width: '100px', height: '100px' }}></div>
-                            <div className="small">{category}</div>
-                        </Col>
-                    ))}
-                </Row>
+                {products.map(product => (
+                    <Row key={product.id} className="mb-4">
+                        <Card className="h-100">
+                            <Link to={`/product/${product.id}`}>
+                                <Card.Img variant="top" src={getImageUrl(product.image)} />
+                            </Link>
+                            <Card.Body>
+                                <Link to={`/product/${product.id}`} className="text-decoration-none">
+                                    <Card.Title>{product.name}</Card.Title>
+                                </Link>
+                                <Card.Text>{formatPrice(product.price)}</Card.Text>
+                            </Card.Body>
+                        </Card>
+                    </Row>
+                ))}
             </Container>
 
             {/* Shopping Made Easy */}
