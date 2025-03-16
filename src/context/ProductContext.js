@@ -1,45 +1,44 @@
-// src/contexts/ProductContext.js
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import { BASE_URL } from '../api/api';
 
-// Create the context
-export const ProductContext = createContext();
+// Tạo Context cho sản phẩm
+const ProductContext = createContext();
 
-// Create a custom hook to use the product context
-export const useProductContext = () => useContext(ProductContext);
-
-// Provider component
+// Provider Component
 export const ProductProvider = ({ children }) => {
-    // State for storing data
+    // State quản lý sản phẩm và danh mục
     const [categories, setCategories] = useState([]);
     const [products, setProducts] = useState([]);
+    const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Fetch all data on component mount
+    // Fetch toàn bộ dữ liệu
     useEffect(() => {
         const fetchData = async () => {
             try {
-                setLoading(true);
-
                 // Fetch categories
                 const categoriesResponse = await fetch(`${BASE_URL}/categories`);
-                if (!categoriesResponse.ok) throw new Error('Failed to fetch categories. Please try again later.');
+                if (!categoriesResponse.ok) throw new Error('Không thể tải danh mục');
                 const categoriesData = await categoriesResponse.json();
 
                 // Fetch products
                 const productsResponse = await fetch(`${BASE_URL}/products`);
-                if (!productsResponse.ok) throw new Error('Failed to fetch products');
+                if (!productsResponse.ok) throw new Error('Không thể tải sản phẩm');
                 const productsData = await productsResponse.json();
 
-                // Update state with fetched data
+                // Fetch reviews
+                const reviewsResponse = await fetch(`${BASE_URL}/reviews`);
+                if (!reviewsResponse.ok) throw new Error('Không thể tải đánh giá');
+                const reviewsData = await reviewsResponse.json();
+
+                // Cập nhật state
                 setCategories(categoriesData);
                 setProducts(productsData);
-                setError(null);
+                setReviews(reviewsData);
+                setLoading(false);
             } catch (err) {
                 setError(err.message);
-                console.error('Error fetching data:', err);
-            } finally {
                 setLoading(false);
             }
         };
@@ -47,40 +46,36 @@ export const ProductProvider = ({ children }) => {
         fetchData();
     }, []);
 
-    // Get product by ID
+    // Lấy sản phẩm theo ID
     const getProductById = (id) => {
         return products.find(product => product.id === id) || null;
     };
 
-    // Get products by category ID
+    // Lấy sản phẩm theo danh mục
     const getProductsByCategory = (categoryId) => {
         return products.filter(product => product.categoryId === categoryId);
     };
 
-    // Get category by ID
+    // Lấy danh mục theo ID
     const getCategoryById = (id) => {
         return categories.find(category => category.id === id) || null;
     };
 
-    // Get full image URL
-    const getImageUrl = (imagePath) => {
-        if (!imagePath) return null;
-        // Check if the image path is already a full URL
-        if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-            return imagePath;
-        }
-        return `${BASE_URL}${imagePath}`;
+    // Lấy đánh giá của một sản phẩm
+    const getProductReviews = (productId) => {
+        return reviews.filter(review => review.productId === productId);
     };
 
-    // Format price to VND
-    const formatPrice = (price) => {
-        return new Intl.NumberFormat('vi-VN', {
-            style: 'currency',
-            currency: 'VND'
-        }).format(price);
+    // Tính điểm đánh giá trung bình
+    const getAverageRating = (productId) => {
+        const productReviews = getProductReviews(productId);
+        if (productReviews.length === 0) return 0;
+
+        const totalRating = productReviews.reduce((sum, review) => sum + review.rating, 0);
+        return totalRating / productReviews.length;
     };
 
-    // Search products by name or description
+    // Tìm kiếm sản phẩm
     const searchProducts = (query) => {
         if (!query) return products;
         const searchTerm = query.toLowerCase();
@@ -90,7 +85,7 @@ export const ProductProvider = ({ children }) => {
         );
     };
 
-    // Sort products by price or rating
+    // Sắp xếp sản phẩm
     const sortProducts = (productList, sortBy = 'price', order = 'asc') => {
         return [...productList].sort((a, b) => {
             const valueA = a[sortBy];
@@ -99,27 +94,55 @@ export const ProductProvider = ({ children }) => {
         });
     };
 
-    // The value that will be provided to consumers of this context
-    const value = {
-        BASE_URL,
+    // Định dạng giá
+    const formatPrice = (price) => {
+        return new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+        }).format(price);
+    };
+
+    // Lấy URL hình ảnh
+    const getImageUrl = (imagePath) => {
+        if (!imagePath) return null;
+        if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+            return imagePath;
+        }
+        return `${BASE_URL}${imagePath}`;
+    };
+
+    // Giá trị context để chia sẻ
+    const contextValue = {
         categories,
         products,
+        reviews,
         loading,
         error,
         getProductById,
         getProductsByCategory,
         getCategoryById,
-        getImageUrl,
-        formatPrice,
+        getProductReviews,
+        getAverageRating,
         searchProducts,
-        sortProducts
+        sortProducts,
+        formatPrice,
+        getImageUrl
     };
 
     return (
-        <ProductContext.Provider value={value}>
+        <ProductContext.Provider value={contextValue}>
             {children}
         </ProductContext.Provider>
     );
+};
+
+// Custom hook để sử dụng ProductContext
+export const useProduct = () => {
+    const context = useContext(ProductContext);
+    if (!context) {
+        throw new Error('useProduct phải được sử dụng trong ProductProvider');
+    }
+    return context;
 };
 
 export default ProductProvider;

@@ -1,79 +1,117 @@
-src/
-├── assets/
-├── api/
-│   └── productsApi.ts
-├── configs/
-│   └── apiConfig.ts
-├── components/
-│   ├── auth/
-│   │   └── SignUpForm.tsx
-│   ├── payment/
-│   │   └── PaymentForm.tsx
-│   ├── common/
-│   │   └── Button.tsx
-│   └── products/
-│       ├── ProductList.tsx
-│       └── ProductCard.tsx
-├── contexts/
-│   └── ProductContext.tsx
-├── hooks/
-│   ├── auth/
-│   │   └── useAuth.ts
-│   ├── payment/
-│   │   └── usePayment.ts
-│   └── products/
-│       └── useProducts.ts
-├── layouts/
-│   ├── components/
-│   │   ├── Footer.tsx
-│   │   ├── Header.tsx
-│   │   ├── SubMenu.tsx
-│   │   └── TopMenu.tsx
-│   └── MainLayout.tsx
-├── lib/
-│   └── utils.ts
-├── services/
-│   └── productService.ts
-├── states/
-│   └── productState.ts
-├── utils/
-│   └── helpers.ts
-├── App.tsx
-└── index.tsx
+Với việc sử dụng React Router, danh sách components sẽ được cập nhật như sau:
+src/api
+
+api.js: Cấu hình API base URL và các hàm gọi API chung
+
+src/routes
+
+routes.js: Cấu hình định tuyến cho toàn bộ ứng dụng
+PrivateRoute.js: Component bảo vệ các route yêu cầu đăng nhập
+
+src/layout
+
+Đã có sẵn:
+
+MainLayout.js
+includes/Header.js
+includes/Footer.js
+includes/SubMenu.js
+includes/TopNav.js
 
 
-1. Điều chỉnh thư mục components/:
 
-Thêm thư mục products/ để chứa các thành phần liên quan đến sản phẩm:
+src/pages
 
-ProductList.tsx: Hiển thị danh sách sản phẩm.
+HomePage.js
+ProductPage.js
 
-ProductCard.tsx: Hiển thị thông tin chi tiết của một sản phẩm.
+ProductListPage.js
+ProductDetailPage.js
 
-2. Tạo thư mục contexts/:
 
-Thêm thư mục contexts/ để chứa các context của ứng dụng:
+CategoryPage.js
+CartPage.js
+CheckoutPage.js
+AuthPage.js
 
-ProductContext.tsx: Quản lý trạng thái sản phẩm.
+LoginPage.js
+RegisterPage.js
 
-3. Điều chỉnh thư mục hooks/:
 
-Thêm thư mục products/ để chứa các hook liên quan đến sản phẩm:
+UserPage.js
 
-useProducts.ts: Hook để lấy và quản lý danh sách sản phẩm.
+UserProfilePage.js
+UserOrdersPage.js
 
-4. Tạo thư mục layouts/:
 
-Thêm thư mục layouts/ để chứa các thành phần bố cục của ứng dụng:
+NotFoundPage.js
 
-MainLayout.tsx: Bố cục chính của ứng dụng, chứa Header, Footer, SubMenu, và TopMenu.
+src/components
 
-components/: Chứa các thành phần con của bố cục:
+Product
 
-Header.tsx: Thành phần header của ứng dụng.
+ProductCard.js
+ProductList.js
+ProductFilter.js
+ProductSearch.js
 
-Footer.tsx: Thành phần footer của ứng dụng.
 
-SubMenu.tsx: Thành phần submenu của ứng dụng.
+Category
 
-TopMenu.tsx: Thành phần top menu của ứng dụng.
+CategoryCard.js
+CategoryList.js
+CategoryNavigation.js
+
+
+Cart
+
+CartItem.js
+CartList.js
+CartSummary.js
+CartTotal.js
+
+
+Review
+
+ReviewItem.js
+ReviewList.js
+ReviewForm.js
+RatingStars.js
+
+
+User
+
+LoginForm.js
+RegisterForm.js
+UserProfileForm.js
+UserOrderList.js
+
+
+Auth
+
+AuthWrapper.js
+LogoutButton.js
+
+
+
+src/utils
+
+RatingDisplay.js
+LoadingSpinner.js
+ErrorBoundary.js
+ErrorMessage.js
+Modal.js
+SearchBar.js
+SortOptions.js
+FilterOptions.js
+ProtectedRoute.js
+
+Ghi chú
+
+Thêm thư mục routes để quản lý định tuyến
+Tích hợp React Router
+Chia nhỏ các trang và components
+Hỗ trợ các tính năng như đăng nhập, bảo vệ route
+Linh hoạt và mở rộng
+
+Bạn muốn tôi bắt đầu triển khai component nào trước?
