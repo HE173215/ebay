@@ -4,32 +4,62 @@ import { useProduct } from "../../context/ProductContext";
 import { useNavigate } from 'react-router-dom';
 
 const SearchBar = () => {
-    const { categories, searchProducts, getProductsByCategory } = useProduct();
+    const { categories, products } = useProduct();
     const navigate = useNavigate();
 
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
 
     const handleSearch = () => {
-        let searchResults;
+        console.log('Search with:', { searchTerm, selectedCategory });
 
-        if (selectedCategory) {
-            // Lấy sản phẩm theo danh mục và từ khóa
-            const categoryProducts = getProductsByCategory(Number(selectedCategory));
-            searchResults = categoryProducts.filter(product =>
-                product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                product.description.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-        } else {
-            // Tìm kiếm toàn bộ sản phẩm
-            searchResults = searchProducts(searchTerm);
+        // Nếu chọn category, chuyển đến trang category
+        if (selectedCategory && !searchTerm) {
+            navigate(`/category/${selectedCategory}`);
+            return;
         }
 
-        // Lưu kết quả tìm kiếm vào state hoặc localStorage nếu cần
-        localStorage.setItem('searchResults', JSON.stringify(searchResults));
+        // Lọc sản phẩm theo từ khóa và category
+        let filteredProducts = [...products];
+
+        // Lọc theo từ khóa nếu có
+        if (searchTerm) {
+            const searchLower = searchTerm.toLowerCase();
+            filteredProducts = filteredProducts.filter(product =>
+                product.name.toLowerCase().includes(searchLower) ||
+                product.description.toLowerCase().includes(searchLower)
+            );
+        }
+
+        // Lọc theo category nếu có
+        if (selectedCategory) {
+            const categoryId = parseInt(selectedCategory);
+            filteredProducts = filteredProducts.filter(product => 
+                product.categoryId === categoryId
+            );
+        }
+
+        console.log('Filtered products:', filteredProducts);
+
+        // Lưu kết quả tìm kiếm
+        localStorage.setItem('searchResults', JSON.stringify(filteredProducts));
+        localStorage.setItem('searchParams', JSON.stringify({
+            term: searchTerm,
+            category: selectedCategory
+        }));
 
         // Chuyển đến trang kết quả tìm kiếm
         navigate('/search-results');
+    };
+
+    const handleCategoryChange = (e) => {
+        const value = e.target.value;
+        setSelectedCategory(value);
+        
+        // Nếu không có từ khóa tìm kiếm, chuyển đến trang category ngay
+        if (!searchTerm && value) {
+            navigate(`/category/${value}`);
+        }
     };
 
     return (
@@ -47,7 +77,7 @@ const SearchBar = () => {
             <Form.Select
                 style={{ maxWidth: '200px' }}
                 value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
+                onChange={handleCategoryChange}
             >
                 <option value="">All Category</option>
                 {categories.map(category => (

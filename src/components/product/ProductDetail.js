@@ -5,6 +5,7 @@ import {FaHeart, FaShoppingCart, FaStar, FaExclamationCircle} from 'react-icons/
 import {useProduct} from "../../context/ProductContext";
 import {useCart} from "../../context/CartContext";
 import {useUser} from "../../context/UserContext";
+import {BASE_URL} from "../../api/api";
 
 const ProductDetail = () => {
     const {id} = useParams();
@@ -21,7 +22,7 @@ const ProductDetail = () => {
         categories
     } = useProduct();
     const {addToCart} = useCart();
-    const {currentUser} = useUser();
+    const {user} = useUser();
 
     const [product, setProduct] = useState(null);
     const [category, setCategory] = useState(null);
@@ -30,77 +31,104 @@ const ProductDetail = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [wishlist, setWishlist] = useState(false);
-    const [maxStock, setMaxStock] = useState(10);
+    const [maxStock, setMaxStock] = useState(0);
 
     useEffect(() => {
-        const fetchProductDetails = () => {
+        const fetchProductDetails = async () => {
             try {
+                console.log('Fetching product details for ID:', id);
                 const productId = Number(id);
 
                 if (isNaN(productId)) {
                     throw new Error("ID sản phẩm không hợp lệ");
                 }
 
-                const fetchedProduct = products.find(p => p.id === productId);
+                // Thử fetch trực tiếp từ API nếu không có trong context
+                let fetchedProduct = getProductById(productId);
+                
+                if (!fetchedProduct) {
+                    console.log('Product not found in context, fetching from API...');
+                    const response = await fetch(`${BASE_URL}/products/${productId}`);
+                    if (!response.ok) throw new Error("Không thể tải thông tin sản phẩm");
+                    fetchedProduct = await response.json();
+                }
 
                 if (!fetchedProduct) {
                     throw new Error("Không tìm thấy sản phẩm");
                 }
 
+                console.log('Fetched product:', fetchedProduct);
                 setProduct(fetchedProduct);
-                // Lấy số lượng tồn kho từ hàm getProductStock
-                const stock = getProductStock(productId);
-                setMaxStock(stock);
 
-                const fetchedCategory = categories.find(
-                    c => c.id === fetchedProduct.categoryId
-                );
+                // Lấy số lượng tồn kho trực tiếp từ sản phẩm
+                setMaxStock(fetchedProduct.stock || 50); // Mặc định là 50 nếu không có stock
+
+                // Lấy thông tin danh mục
+                const fetchedCategory = getCategoryById(fetchedProduct.categoryId);
+                console.log('Fetched category:', fetchedCategory);
                 setCategory(fetchedCategory);
 
+                // Lấy đánh giá
                 const productReviews = getProductReviews(productId);
+                console.log('Fetched reviews:', productReviews);
                 setReviews(productReviews);
 
                 setLoading(false);
             } catch (err) {
+                console.error('Error in fetchProductDetails:', err);
                 setError(err.message);
                 setLoading(false);
             }
         };
 
-        // Đảm bảo products đã được load
-        if (products.length > 0) {
-            fetchProductDetails();
-        }
-    }, [id, products, categories, getProductReviews, getProductStock]);
+        fetchProductDetails();
+    }, [id, getProductById, getCategoryById, getProductReviews]);
 
     const handleQuantityChange = (e) => {
         const newQuantity = parseInt(e.target.value);
-        // Sử dụng maxStock để giới hạn số lượng
-        setQuantity(Math.max(1, Math.min(newQuantity, maxStock)));
+        if (isNaN(newQuantity) || newQuantity < 1) {
+            setQuantity(1);
+        } else if (newQuantity > maxStock) {
+            setQuantity(maxStock);
+            alert(`Số lượng tối đa có thể mua là ${maxStock}`);
+        } else {
+            setQuantity(newQuantity);
+        }
+    };
+
+    const increaseQuantity = () => {
+        if (quantity < maxStock) {
+            setQuantity(quantity + 1);
+        } else {
+            alert(`Số lượng tối đa có thể mua là ${maxStock}`);
+        }
+    };
+
+    const decreaseQuantity = () => {
+        if (quantity > 1) {
+            setQuantity(quantity - 1);
+        }
     };
 
     const handleAddToCart = () => {
-        if (!currentUser) {
-            navigate("/login");
+        if (!quantity) {
+            alert('Vui lòng chọn số lượng sản phẩm');
             return;
         }
-
-        if (product) {
-            addToCart({
-                id: product.id,
-                name: product.name,
-                price: product.price,
-                quantity: quantity,
-                image: product.image
-            });
-        }
+        addToCart(user?.id || 'guest', product.id, quantity);
+        alert('Đã thêm sản phẩm vào giỏ hàng!');
     };
 
     const handleBuyNow = () => {
-        handleAddToCart();
-        navigate("/checkout");
+        if (!quantity) {
+            alert('Vui lòng chọn số lượng sản phẩm');
+            return;
+        }
+        addToCart(user?.id || 'guest', product.id, quantity);
+        navigate('/checkout');
     };
-
+    
+    
     const toggleWishlist = () => {
         setWishlist(!wishlist);
     };
@@ -174,21 +202,38 @@ const ProductDetail = () => {
                                     <Col xs={3}>
                                         <label htmlFor="quantity" className="form-label">Số lượng</label>
                                     </Col>
-                                    <Col xs={3}>
-                                        <input
-                                            type="number"
-                                            id="quantity"
-                                            className="form-control"
-                                            value={quantity}
-                                            onChange={handleQuantityChange}
-                                            min="1"
-                                            max={maxStock}
-                                        />
-                                    </Col>
                                     <Col xs={6}>
-                            <span className="text-muted small">
-                                Còn hàng ({maxStock})
-                            </span>
+                                        <div className="d-flex align-items-center">
+                                            <Button 
+                                                variant="outline-secondary" 
+                                                size="sm"
+                                                onClick={decreaseQuantity}
+                                            >
+                                                -
+                                            </Button>
+                                            <input
+                                                type="number"
+                                                id="quantity"
+                                                className="form-control mx-2"
+                                                style={{width: '70px', textAlign: 'center'}}
+                                                value={quantity}
+                                                onChange={handleQuantityChange}
+                                                min="1"
+                                                max={maxStock}
+                                            />
+                                            <Button 
+                                                variant="outline-secondary" 
+                                                size="sm"
+                                                onClick={increaseQuantity}
+                                            >
+                                                +
+                                            </Button>
+                                        </div>
+                                    </Col>
+                                    <Col xs={3}>
+                                        <span className="text-muted small">
+                                            Còn {maxStock} sản phẩm
+                                        </span>
                                     </Col>
                                 </Row>
                             </div>

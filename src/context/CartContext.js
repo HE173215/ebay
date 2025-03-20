@@ -7,19 +7,31 @@ const CartContext = createContext();
 // Provider Component
 export const CartProvider = ({ children }) => {
     // State quản lý giỏ hàng
-    const [carts, setCarts] = useState([]);
+    const [carts, setCarts] = useState(() => {
+        // Khởi tạo giỏ hàng từ localStorage nếu có
+        const savedCarts = localStorage.getItem('carts');
+        return savedCarts ? JSON.parse(savedCarts) : [];
+    });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    // Lưu giỏ hàng vào localStorage mỗi khi có thay đổi
+    useEffect(() => {
+        localStorage.setItem('carts', JSON.stringify(carts));
+    }, [carts]);
 
     // Fetch danh sách giỏ hàng
     useEffect(() => {
         const fetchCarts = async () => {
             try {
-                const response = await fetch(`${BASE_URL}/carts`);
-                if (!response.ok) throw new Error('Không thể tải giỏ hàng');
+                // Chỉ fetch nếu không có dữ liệu trong localStorage
+                if (carts.length === 0) {
+                    const response = await fetch(`${BASE_URL}/carts`);
+                    if (!response.ok) throw new Error('Không thể tải giỏ hàng');
 
-                const cartsData = await response.json();
-                setCarts(cartsData);
+                    const cartsData = await response.json();
+                    setCarts(cartsData);
+                }
                 setLoading(false);
             } catch (err) {
                 setError(err.message);
@@ -37,32 +49,48 @@ export const CartProvider = ({ children }) => {
 
     // Thêm sản phẩm vào giỏ hàng
     const addToCart = (userId, productId, quantity = 1) => {
+        console.log('Adding to cart:', { userId, productId, quantity });
         setCarts(prevCarts => {
             // Tìm giỏ hàng của người dùng
-            const userCartIndex = prevCarts.findIndex(cart => cart.userId === userId);
+            let userCart = prevCarts.find(cart => cart.userId === userId);
 
-            if (userCartIndex > -1) {
+            if (userCart) {
                 // Nếu giỏ hàng đã tồn tại
-                const updatedCarts = [...prevCarts];
-                const existingItemIndex = updatedCarts[userCartIndex].items.findIndex(
-                    item => item.productId === productId
-                );
-
-                if (existingItemIndex > -1) {
-                    // Nếu sản phẩm đã có trong giỏ, tăng số lượng
-                    updatedCarts[userCartIndex].items[existingItemIndex].quantity += quantity;
-                } else {
-                    // Nếu sản phẩm chưa có, thêm mới
-                    updatedCarts[userCartIndex].items.push({ productId, quantity });
-                }
-
+                const updatedCarts = prevCarts.map(cart => {
+                    if (cart.userId === userId) {
+                        // Tìm sản phẩm trong giỏ hàng
+                        const existingItem = cart.items.find(item => item.productId === productId);
+                        
+                        if (existingItem) {
+                            // Nếu sản phẩm đã có trong giỏ, cộng thêm số lượng mới
+                            return {
+                                ...cart,
+                                items: cart.items.map(item => 
+                                    item.productId === productId 
+                                        ? { ...item, quantity: item.quantity + quantity }
+                                        : item
+                                )
+                            };
+                        } else {
+                            // Nếu sản phẩm chưa có, thêm mới
+                            return {
+                                ...cart,
+                                items: [...cart.items, { productId, quantity }]
+                            };
+                        }
+                    }
+                    return cart;
+                });
+                console.log('Updated carts:', updatedCarts);
                 return updatedCarts;
             } else {
                 // Nếu chưa có giỏ hàng, tạo mới
-                return [
-                    ...prevCarts,
-                    { userId, items: [{ productId, quantity }] }
-                ];
+                const newCart = {
+                    userId,
+                    items: [{ productId, quantity }]
+                };
+                console.log('New cart created:', newCart);
+                return [...prevCarts, newCart];
             }
         });
     };

@@ -17,27 +17,37 @@ export const ProductProvider = ({ children }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Fetch categories
+                console.log('Fetching data from:', BASE_URL);
+                
+                // Fetch categories first
                 const categoriesResponse = await fetch(`${BASE_URL}/categories`);
                 if (!categoriesResponse.ok) throw new Error('Không thể tải danh mục');
                 const categoriesData = await categoriesResponse.json();
+                console.log('Fetched categories:', categoriesData);
+                setCategories(categoriesData);
 
                 // Fetch products
                 const productsResponse = await fetch(`${BASE_URL}/products`);
                 if (!productsResponse.ok) throw new Error('Không thể tải sản phẩm');
                 const productsData = await productsResponse.json();
+                console.log('Fetched products:', productsData);
+                
+                // Ensure categoryId is a number
+                const processedProducts = productsData.map(product => ({
+                    ...product,
+                    categoryId: parseInt(product.categoryId)
+                }));
+                setProducts(processedProducts);
 
                 // Fetch reviews
                 const reviewsResponse = await fetch(`${BASE_URL}/reviews`);
                 if (!reviewsResponse.ok) throw new Error('Không thể tải đánh giá');
                 const reviewsData = await reviewsResponse.json();
-
-                // Cập nhật state
-                setCategories(categoriesData);
-                setProducts(productsData);
                 setReviews(reviewsData);
+
                 setLoading(false);
             } catch (err) {
+                console.error('Error fetching data:', err);
                 setError(err.message);
                 setLoading(false);
             }
@@ -48,12 +58,20 @@ export const ProductProvider = ({ children }) => {
 
     // Lấy sản phẩm theo ID
     const getProductById = (id) => {
-        return products.find(product => product.id === id) || null;
+        const productId = Number(id);
+        return products.find(product => product.id === productId) || null;
     };
 
     // Lấy sản phẩm theo danh mục
     const getProductsByCategory = (categoryId) => {
+        console.log('Getting products for category:', categoryId);
         const parsedCategoryId = parseInt(categoryId);
+        
+        if (isNaN(parsedCategoryId)) {
+            console.warn('Invalid category ID:', categoryId);
+            return [];
+        }
+
         return products.filter(product => product.categoryId === parsedCategoryId);
     };
 

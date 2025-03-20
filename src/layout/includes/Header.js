@@ -4,9 +4,17 @@ import { FaBell, FaShoppingCart } from 'react-icons/fa';
 import TopNav from './TopNav';
 import { useNavigate } from "react-router-dom";
 import SearchBar from '../../components/filter/SearchBar'; // Import SearchBar component
+import { useCart } from '../../context/CartContext';
+import { useUser } from '../../context/UserContext';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
     const navigate = useNavigate();
+    const { user } = useUser();
+    const { getCartByUserId } = useCart();
+    const cart = getCartByUserId(user?.id || 'guest');
+    const cartItemCount = cart?.items?.reduce((total, item) => total + item.quantity, 0) || 0;
+
 
     return (
         <header>
@@ -36,7 +44,14 @@ const Header = () => {
                         <div className="mx-2">Watchlist</div>
                         <div className="mx-2">My eBay</div>
                         <div className="mx-2"><FaBell /></div>
-                        <div className="mx-2"><FaShoppingCart /></div>
+                        <Link to="/cart" className="mx-2 position-relative">
+                            <FaShoppingCart />
+                            {cartItemCount > 0 && (
+                                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {cartItemCount}
+                                </span>
+                            )}
+                        </Link>
                     </div>
                 </Container>
             </Navbar>

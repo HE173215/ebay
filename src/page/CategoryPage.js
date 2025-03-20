@@ -1,27 +1,31 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import Header from '../layout/includes/Header';
 import SubMenu from '../layout/includes/SubMenu';
 import Footer from '../layout/includes/Footer';
 import { useProduct } from '../context/ProductContext';
-import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+import { Container, Row, Col, Card } from 'react-bootstrap';
 
 const CategoryPage = () => {
-    const { id } = useParams(); // Lấy ID từ URL
-    const { categories, getProductsByCategory, formatPrice, getImageUrl } = useProduct();
+    const { id } = useParams();
+    const { categories, products, formatPrice, getImageUrl } = useProduct();
+    const [categoryProducts, setCategoryProducts] = useState([]);
 
     // Chuyển đổi id sang số nếu có
-    const categoryId = id ? Number(id) : null;
+    const categoryId = id ? parseInt(id) : (categories[0]?.id || null);
+
+    useEffect(() => {
+        if (categoryId && products.length > 0) {
+            // Lọc sản phẩm trực tiếp theo categoryId
+            const filtered = products.filter(product => parseInt(product.categoryId) === categoryId);
+            console.log('Filtering products for category:', categoryId);
+            console.log('Found products:', filtered);
+            setCategoryProducts(filtered);
+        }
+    }, [categoryId, products]);
 
     // Tìm danh mục hiện tại
-    const currentCategory = categoryId
-        ? categories.find(cat => cat.id === categoryId)
-        : categories[0];
-
-    // Lấy sản phẩm của danh mục
-    const categoryProducts = currentCategory
-        ? getProductsByCategory(currentCategory.id)
-        : [];
+    const currentCategory = categories.find(cat => cat.id === categoryId);
 
     return (
         <div className="category-page">
@@ -35,14 +39,14 @@ const CategoryPage = () => {
                             <Card.Header>Danh mục</Card.Header>
                             <Card.Body className="p-0">
                                 {categories.map(category => (
-                                    <Button
+                                    <Link 
                                         key={category.id}
-                                        variant={categoryId === category.id ? 'primary' : 'light'}
-                                        className="w-100 text-start rounded-0"
-                                        href={`/category/${category.id}`}
+                                        to={`/category/${category.id}`}
+                                        className={`btn ${parseInt(id) === category.id ? 'btn-primary' : 'btn-light'} w-100 text-start rounded-0`}
+                                        style={{ textDecoration: 'none' }}
                                     >
                                         {category.name}
-                                    </Button>
+                                    </Link>
                                 ))}
                             </Card.Body>
                         </Card>
@@ -50,7 +54,7 @@ const CategoryPage = () => {
 
                     {/* Product Listing */}
                     <Col md={9}>
-                        <h1>{currentCategory?.name || 'Danh mục'}</h1>
+                        <h1>{currentCategory?.name || 'Tất cả sản phẩm'}</h1>
                         <p>{currentCategory?.description}</p>
 
                         <Row>
@@ -71,12 +75,12 @@ const CategoryPage = () => {
                                             <Card.Text className="text-muted">
                                                 {formatPrice(product.price)}
                                             </Card.Text>
-                                            <Button
-                                                variant="outline-primary"
-                                                href={`/product/${product.id}`}
+                                            <Link
+                                                to={`/product/${product.id}`}
+                                                className="btn btn-outline-primary"
                                             >
                                                 Xem chi tiết
-                                            </Button>
+                                            </Link>
                                         </Card.Body>
                                     </Card>
                                 </Col>

@@ -7,6 +7,7 @@ import SubMenu from './includes/SubMenu';
 import Footer from './includes/Footer';
 import {Link} from "react-router-dom";
 import {useProduct} from "../context/ProductContext";
+import HomeCarousel from '../components/carousel/HomeCarousel';
 
 const EbayHomepage = () => {
     const {categories, getImageUrl} = useProduct();
@@ -18,25 +19,8 @@ const EbayHomepage = () => {
             {/* Categories Navigation */}
             <SubMenu/>
 
-            {/* Hero Banner */}
-            <div className="hero-banner bg-light text-white py-5 mb-4" style={{
-                backgroundImage: 'url(https://ir.ebaystatic.com/cr/v/c1/home/hero-banner-lifestyle.jpg)',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                height: '300px'
-            }}>
-                <Container className="h-100">
-                    <Row className="h-100 align-items-center">
-                        <Col md={6}>
-                            <div className="text-dark py-4">
-                                <h1 className="fw-bold">Get your order or your money back</h1>
-                                <p>Shop confidently with eBay Money Back Guarantee®.</p>
-                                <Button variant="light" className="rounded-pill">Learn more</Button>
-                            </div>
-                        </Col>
-                    </Row>
-                </Container>
-            </div>
+            {/* Carousel */}
+            <HomeCarousel />
 
             {/* Popular Categories */}
             <Container className="mb-5">
@@ -50,9 +34,14 @@ const EbayHomepage = () => {
                                         src={category.image}
                                         alt={category.name}
                                         className="img-fluid rounded-circle"
+                                        style={{
+                                            width: '100px',
+                                            height: '100px',
+                                            objectFit: 'cover'
+                                        }}
                                     />
                                 </div>
-                                <div className="category-name">{category.name}</div>
+                                <div className="category-name text-dark">{category.name}</div>
                             </Link>
                         </Col>
                     ))}
@@ -64,8 +53,7 @@ const EbayHomepage = () => {
                 <Row className="bg-light p-3 rounded align-items-center">
                     <Col>
                         <h4>Shopping made easy</h4>
-                        <p className="small text-muted mb-0">Enjoy reliability, secure deliveries and hassle-free
-                            returns.</p>
+                        <p className="small text-muted mb-0">Enjoy reliability, secure deliveries and hassle-free returns.</p>
                     </Col>
                     <Col xs="auto">
                         <Button variant="dark" className="rounded-pill">Start now</Button>
@@ -78,17 +66,17 @@ const EbayHomepage = () => {
 
             {/* Custom CSS */}
             <style jsx>{`
-                .category-circle {
+                .category-icon {
                     transition: all 0.2s ease;
                 }
 
-                .category-circle:hover {
+                .category-icon:hover {
                     transform: scale(1.05);
                 }
 
-                .card-img-fixed-height {
-                    height: 180px;
-                    object-fit: cover;
+                .category-name {
+                    font-size: 0.9rem;
+                    font-weight: 500;
                 }
             `}</style>
         </div>

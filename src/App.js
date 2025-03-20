@@ -12,6 +12,11 @@ import Register from "./components/User/Register";
 import UserProfile from "./components/User/UserProfile";
 import PrivateRoute from "./components/PrivateRoute";
 import SearchResultsPage from "./page/SearchResultsPage";
+import OrderHistoryPage from './pages/OrderHistoryPage';
+import CartPage from './pages/CartPage';
+import CheckoutPage from './pages/CheckOutPage';
+
+
 
 function App() {
     return (
@@ -27,6 +32,9 @@ function App() {
                                 <Route path="/login" element={<Login />} />
                                 <Route path="/register" element={<Register />} />
                                 <Route path="/search-results" element={<SearchResultsPage />} />
+                                <Route path="/checkout" element={<CheckoutPage/>} />
+                                <Route path="/cart" element={<CartPage />} />
+                                <Route path="/order-history" element={<OrderHistoryPage />} />
                                 <Route
                                     path="/profile"
                                     element={
