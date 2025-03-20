@@ -111,6 +111,11 @@ export const ProductProvider = ({ children }) => {
         }
         return `${BASE_URL}${imagePath}`;
     };
+    // Lấy số lượng sản phẩm theo ID
+    const getProductStock = (productId) => {
+        const product = products.find(p => p.id === productId);
+        return product ? product.stock : 0;
+    };
 
     // Giá trị context để chia sẻ
     const contextValue = {
@@ -127,7 +132,8 @@ export const ProductProvider = ({ children }) => {
         searchProducts,
         sortProducts,
         formatPrice,
-        getImageUrl
+        getImageUrl,
+        getProductStock
     };
 
     return (

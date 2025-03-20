@@ -1,13 +1,27 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { Container, Row, Col, Button, Badge, ListGroup, Nav, Tab } from 'react-bootstrap';
-import { FaHeart, FaShoppingCart, FaStar } from 'react-icons/fa';
-import axios from "axios";
-import { BASE_URL } from "../../api/api";
+import React, {useEffect, useState} from "react";
+import {useParams, useNavigate} from "react-router-dom";
+import {Container, Row, Col, Button, Alert, ListGroup, Nav, Tab, Spinner} from 'react-bootstrap';
+import {FaHeart, FaShoppingCart, FaStar, FaExclamationCircle} from 'react-icons/fa';
+import {useProduct} from "../../context/ProductContext";
+import {useCart} from "../../context/CartContext";
+import {useUser} from "../../context/UserContext";
 
 const ProductDetail = () => {
-    const { id } = useParams();
+    const {id} = useParams();
     const navigate = useNavigate();
+    const {
+        getProductById,
+        getCategoryById,
+        getProductReviews,
+        getAverageRating,
+        formatPrice,
+        getImageUrl,
+        getProductStock,
+        products,
+        categories
+    } = useProduct();
+    const {addToCart} = useCart();
+    const {currentUser} = useUser();
 
     const [product, setProduct] = useState(null);
     const [category, setCategory] = useState(null);
@@ -15,68 +29,117 @@ const ProductDetail = () => {
     const [quantity, setQuantity] = useState(1);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [wishlist, setWishlist] = useState(false);
+    const [maxStock, setMaxStock] = useState(10);
 
     useEffect(() => {
-        const fetchProductDetails = async () => {
+        const fetchProductDetails = () => {
             try {
-                setLoading(true);
+                const productId = Number(id);
 
-                // Fetch product
-                const productRes = await axios.get(`${BASE_URL}/products/${id}`);
-                setProduct(productRes.data);
+                if (isNaN(productId)) {
+                    throw new Error("ID sản phẩm không hợp lệ");
+                }
 
-                // Fetch category
-                const categoryRes = await axios.get(`${BASE_URL}/categories/${productRes.data.categoryId}`);
-                setCategory(categoryRes.data);
+                const fetchedProduct = products.find(p => p.id === productId);
 
-                // Fetch reviews
-                const reviewsRes = await axios.get(`${BASE_URL}/reviews`);
-                const productReviews = reviewsRes.data.filter(review => review.productId === parseInt(id));
+                if (!fetchedProduct) {
+                    throw new Error("Không tìm thấy sản phẩm");
+                }
+
+                setProduct(fetchedProduct);
+                // Lấy số lượng tồn kho từ hàm getProductStock
+                const stock = getProductStock(productId);
+                setMaxStock(stock);
+
+                const fetchedCategory = categories.find(
+                    c => c.id === fetchedProduct.categoryId
+                );
+                setCategory(fetchedCategory);
+
+                const productReviews = getProductReviews(productId);
                 setReviews(productReviews);
 
                 setLoading(false);
             } catch (err) {
-                console.error("Error fetching product details:", err);
-                setError("Không thể tải thông tin sản phẩm. Vui lòng thử lại sau.");
+                setError(err.message);
                 setLoading(false);
             }
         };
 
-        fetchProductDetails();
-    }, [id]);
+        // Đảm bảo products đã được load
+        if (products.length > 0) {
+            fetchProductDetails();
+        }
+    }, [id, products, categories, getProductReviews, getProductStock]);
 
     const handleQuantityChange = (e) => {
-        setQuantity(parseInt(e.target.value));
+        const newQuantity = parseInt(e.target.value);
+        // Sử dụng maxStock để giới hạn số lượng
+        setQuantity(Math.max(1, Math.min(newQuantity, maxStock)));
     };
 
     const handleAddToCart = () => {
-        alert(`Đã thêm ${quantity} sản phẩm vào giỏ hàng`);
-        // Implement add to cart functionality here
+        if (!currentUser) {
+            navigate("/login");
+            return;
+        }
+
+        if (product) {
+            addToCart({
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                quantity: quantity,
+                image: product.image
+            });
+        }
     };
 
     const handleBuyNow = () => {
-        alert(`Mua ngay ${quantity} sản phẩm`);
-        // Implement buy now functionality here
+        handleAddToCart();
+        navigate("/checkout");
     };
 
-    const formatPrice = (price) => {
-        return new Intl.NumberFormat('vi-VN', {
-            style: 'currency',
-            currency: 'VND'
-        }).format(price);
+    const toggleWishlist = () => {
+        setWishlist(!wishlist);
     };
 
-    if (loading) return <div className="text-center py-5">Đang tải...</div>;
-    if (error) return <div className="text-center py-5 text-danger">{error}</div>;
-    if (!product) return <div className="text-center py-5">Không tìm thấy sản phẩm</div>;
+
+    if (loading) return (
+        <Container className="text-center py-5">
+            <Spinner animation="border" role="status">
+                <span className="visually-hidden">Đang tải...</span>
+            </Spinner>
+        </Container>
+    );
+
+    if (error) return (
+        <Container className="py-5">
+            <Alert variant="danger" className="text-center">
+                <FaExclamationCircle className="me-2"/>
+                {error}
+                <div className="mt-3">
+                    <Button variant="outline-secondary" onClick={() => navigate(-1)}>
+                        Quay lại
+                    </Button>
+                </div>
+            </Alert>
+        </Container>
+    );
+
+    if (!product) return (
+        <Container className="text-center py-5">
+            <Alert variant="warning">Không tìm thấy sản phẩm</Alert>
+        </Container>
+    );
 
     return (
         <Container className="py-4">
             <Row>
-                {/* Cột trái - Hình ảnh sản phẩm */}
                 <Col md={6}>
                     <img
-                        src={`${BASE_URL}${product.image}`}
+                        src={getImageUrl(product.image)}
                         alt={product.name}
                         className="img-fluid main-product-image"
                         onError={(e) => {
@@ -86,32 +149,26 @@ const ProductDetail = () => {
                     />
                 </Col>
 
-                {/* Cột phải - Chi tiết sản phẩm */}
                 <Col md={6}>
                     <div className="product-info">
-                        {/* Tiêu đề sản phẩm */}
                         <h1 className="h3 mb-3">{product.name}</h1>
 
-                        {/* Đánh giá sao */}
                         <div className="mb-2">
                             {[1, 2, 3, 4, 5].map((star) => (
                                 <FaStar
                                     key={star}
-                                    className={star <= Math.round(product.rating) ? "text-warning" : "text-secondary"}
+                                    className={star <= Math.round(getAverageRating(product.id)) ? "text-warning" : "text-secondary"}
                                 />
                             ))}
                             <span className="ms-2 text-muted small">({reviews.length} đánh giá)</span>
                         </div>
 
-                        {/* Khung giá */}
                         <div className="price-container border p-3 rounded mb-4">
                             <h2 className="h3 mb-1">{formatPrice(product.price)}</h2>
                             <p className="text-success small mb-2">Miễn phí vận chuyển</p>
                         </div>
 
-                        {/* Hành động sản phẩm */}
                         <div className="product-actions mb-4">
-                            {/* Chọn số lượng */}
                             <div className="mb-3">
                                 <Row className="align-items-center">
                                     <Col xs={3}>
@@ -125,40 +182,51 @@ const ProductDetail = () => {
                                             value={quantity}
                                             onChange={handleQuantityChange}
                                             min="1"
+                                            max={maxStock}
                                         />
                                     </Col>
                                     <Col xs={6}>
-                                        <span className="text-muted small">Còn hàng (>10)</span>
+                            <span className="text-muted small">
+                                Còn hàng ({maxStock})
+                            </span>
                                     </Col>
                                 </Row>
                             </div>
 
-                            {/* Nút mua hàng / thêm vào giỏ */}
                             <div className="d-grid gap-2 mb-3">
-                                <Button variant="primary" size="lg" onClick={handleBuyNow}>Mua ngay</Button>
-                                <Button variant="outline-primary" size="lg" onClick={handleAddToCart}>
-                                    <FaShoppingCart className="me-2" /> Thêm vào giỏ hàng
+                                <Button variant="primary" size="lg" onClick={handleBuyNow}>
+                                    Mua ngay
                                 </Button>
-                                <Button variant="outline-secondary">
-                                    <FaHeart className="me-2" /> Thêm vào danh sách yêu thích
+                                <Button
+                                    variant="outline-primary"
+                                    size="lg"
+                                    onClick={handleAddToCart}
+                                >
+                                    <FaShoppingCart className="me-2"/> Thêm vào giỏ hàng
+                                </Button>
+                                <Button
+                                    variant={wishlist ? "warning" : "outline-secondary"}
+                                    onClick={toggleWishlist}
+                                >
+                                    <FaHeart className="me-2"/>
+                                    {wishlist ? "Đã thêm" : "Thêm vào"} danh sách yêu thích
                                 </Button>
                             </div>
                         </div>
 
-                        {/* Thông số kỹ thuật */}
                         <div className="product-specs mb-4">
                             <h5>Thông số kỹ thuật</h5>
                             <ListGroup variant="flush">
                                 <ListGroup.Item className="d-flex">
-                                    <span className="text-muted" style={{ width: '40%' }}>Tình trạng</span>
-                                    <span>Mới 100%</span>
+                                    <span className="text-muted" style={{width: '40%'}}>Tình trạng</span>
+                                    <span>{product.stock > 0 ? "Mới 100%" : "Hết hàng"}</span>
                                 </ListGroup.Item>
                                 <ListGroup.Item className="d-flex">
-                                    <span className="text-muted" style={{ width: '40%' }}>Thương hiệu</span>
+                                    <span className="text-muted" style={{width: '40%'}}>Thương hiệu</span>
                                     <span>{product.name.split(' ')[0]}</span>
                                 </ListGroup.Item>
                                 <ListGroup.Item className="d-flex">
-                                    <span className="text-muted" style={{ width: '40%' }}>Danh mục</span>
+                                    <span className="text-muted" style={{width: '40%'}}>Danh mục</span>
                                     <span>{category?.name || 'Không xác định'}</span>
                                 </ListGroup.Item>
                             </ListGroup>
@@ -167,7 +235,6 @@ const ProductDetail = () => {
                 </Col>
             </Row>
 
-            {/* Tab mô tả sản phẩm */}
             <Row className="mt-4">
                 <Col>
                     <Tab.Container defaultActiveKey="description">

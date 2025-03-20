@@ -24,7 +24,8 @@
       "price": 15000000,
       "image": "/images/download.jpg",
       "categoryId": 1,
-      "rating": 4.5
+      "rating": 4.5,
+      "stock": 50
     },
     {
       "id": 2,
@@ -33,7 +34,8 @@
       "price": 25000000,
       "image": "/images/download.jpg",
       "categoryId": 1,
-      "rating": 4.8
+      "rating": 4.8,
+      "stock": 30
     },
     {
       "id": 3,
@@ -42,7 +44,8 @@
       "price": 300000,
       "image": "/images/download.jpg",
       "categoryId": 2,
-      "rating": 4.2
+      "rating": 4.2,
+      "stock": 100
     },
     {
       "id": 4,
@@ -51,7 +54,8 @@
       "price": 1200000,
       "image": "/images/download.jpg",
       "categoryId": 2,
-      "rating": 4.6
+      "rating": 4.6,
+      "stock": 75
     },
     {
       "id": 5,
@@ -60,7 +64,8 @@
       "price": 250000,
       "image": "/images/download.jpg",
       "categoryId": 3,
-      "rating": 4.0
+      "rating": 4.0,
+      "stock": 200
     }
   ],
   "users": [
