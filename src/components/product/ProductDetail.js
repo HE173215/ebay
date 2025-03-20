@@ -227,13 +227,6 @@ const ProductDetail = () => {
                     </Tab.Container>
                 </Col>
             </Row>
-
-            <div className="mt-4">
-                <Button variant="secondary" onClick={() => navigate("/")}>
-                    Quay lại trang chủ
-                </Button>
-            </div>
-
             <style jsx>{`
                 .main-product-image {
                     width: 100%;

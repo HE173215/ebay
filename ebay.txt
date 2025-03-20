@@ -115,3 +115,183 @@ Hỗ trợ các tính năng như đăng nhập, bảo vệ route
 Linh hoạt và mở rộng
 
 Bạn muốn tôi bắt đầu triển khai component nào trước?
+
+json-server --watch db.json --port 8000
+
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import { BASE_URL } from '../api/api';
+
+// Tạo Context cho người dùng
+const UserContext = createContext();
+
+// Provider Component
+export const UserProvider = ({ children }) => {
+    // State quản lý thông tin người dùng
+    const [currentUser, setCurrentUser] = useState(null);
+    const [users, setUsers] = useState([]);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // Fetch danh sách người dùng
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const response = await fetch(`${BASE_URL}/users`);
+                if (!response.ok) throw new Error('Không thể tải danh sách người dùng');
+
+                const userData = await response.json();
+                setUsers(userData);
+                setLoading(false);
+                console.log('Danh sách người dùng đã được tải:', userData);
+            } catch (err) {
+                setError(err.message);
+                setLoading(false);
+                console.error('Lỗi khi tải danh sách người dùng:', err.message);
+            }
+        };
+
+        fetchUsers();
+    }, []);
+
+    // Hàm đăng nhập
+    const login = (username, password) => {
+        console.log(`Đang thực hiện đăng nhập với username: ${username}`);
+        const user = users.find(
+            u => u.username === username && u.password === password
+        );
+
+        if (user) {
+            setCurrentUser(user);
+            setIsAuthenticated(true);
+            saveUserToStorage(user);
+            console.log('Đăng nhập thành công:', user);
+            return user;
+        } else {
+            const errorMessage = 'Tên đăng nhập hoặc mật khẩu không đúng';
+            setError(errorMessage);
+            console.error(errorMessage);
+            return null;
+        }
+    };
+
+    // Hàm đăng xuất
+    const logout = () => {
+        console.log('Đang thực hiện đăng xuất');
+        setCurrentUser(null);
+        setIsAuthenticated(false);
+        removeUserFromStorage();
+        console.log('Đã đăng xuất thành công');
+    };
+
+    // Lấy người dùng theo ID
+    const getUserById = (userId) => {
+        const user = users.find(user => user.id === userId) || null;
+        console.log(`Tìm kiếm người dùng với ID ${userId}:`, user);
+        return user;
+    };
+
+    // Lưu thông tin người dùng vào localStorage
+    const saveUserToStorage = (user) => {
+        try {
+            localStorage.setItem('user', JSON.stringify(user));
+            console.log('Đã lưu thông tin người dùng vào localStorage:', user);
+        } catch (error) {
+            console.error('Lỗi khi lưu thông tin người dùng vào localStorage:', error);
+        }
+    };
+
+    // Lấy thông tin người dùng từ localStorage
+    const getUserFromStorage = () => {
+        try {
+            const userString = localStorage.getItem('user');
+            const user = userString ? JSON.parse(userString) : null;
+            console.log('Lấy thông tin người dùng từ localStorage:', user);
+            return user;
+        } catch (error) {
+            console.error('Lỗi khi lấy thông tin người dùng từ localStorage:', error);
+            return null;
+        }
+    };
+
+    // Xóa thông tin người dùng khỏi localStorage
+    const removeUserFromStorage = () => {
+        try {
+            localStorage.removeItem('user');
+            console.log('Đã xóa thông tin người dùng khỏi localStorage');
+        } catch (error) {
+            console.error('Lỗi khi xóa thông tin người dùng khỏi localStorage:', error);
+        }
+    };
+
+    // Hàm kiểm tra thông tin người dùng đã được lưu trữ sau khi đăng nhập chưa
+    const checkUserStorageAfterLogin = () => {
+        const storedUser = getUserFromStorage();
+
+        if (storedUser) {
+            // Kiểm tra xem thông tin người dùng trong localStorage có khớp với currentUser không
+            const isStorageConsistent = currentUser &&
+                storedUser.id === currentUser.id &&
+                storedUser.username === currentUser.username;
+
+            console.log('Kiểm tra lưu trữ người dùng:', {
+                isStored: true,
+                isConsistent: isStorageConsistent,
+                storedUser: storedUser
+            });
+
+            return {
+                isStored: true,
+                isConsistent: isStorageConsistent,
+                storedUser: storedUser
+            };
+        }
+
+        console.log('Không có thông tin người dùng được lưu trữ');
+        return {
+            isStored: false,
+            isConsistent: false,
+            storedUser: null
+        };
+    };
+
+    // Kiểm tra xem người dùng đã đăng nhập hay chưa khi component được mount
+    useEffect(() => {
+        const user = getUserFromStorage();
+        if (user) {
+            setCurrentUser(user);
+            setIsAuthenticated(true);
+            console.log('Người dùng đã được tự động đăng nhập từ localStorage:', user);
+        }
+    }, []);
+
+    // Giá trị context để chia sẻ
+    const contextValue = {
+        currentUser,
+        users,
+        isAuthenticated,
+        loading,
+        error,
+        login,
+        logout,
+        getUserById,
+        checkUserStorageAfterLogin
+    };
+
+    return (
+        <UserContext.Provider value={contextValue}>
+            {children}
+        </UserContext.Provider>
+    );
+};
+
+// Custom hook để sử dụng UserContext
+export const useUser = () => {
+    const context = useContext(UserContext);
+    if (!context) {
+        throw new Error('useUser phải được sử dụng trong UserProvider');
+    }
+    return context;
+};
+
+export default UserProvider;

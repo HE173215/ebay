@@ -53,7 +53,8 @@ export const ProductProvider = ({ children }) => {
 
     // Lấy sản phẩm theo danh mục
     const getProductsByCategory = (categoryId) => {
-        return products.filter(product => product.categoryId === categoryId);
+        const parsedCategoryId = parseInt(categoryId);
+        return products.filter(product => product.categoryId === parsedCategoryId);
     };
 
     // Lấy danh mục theo ID

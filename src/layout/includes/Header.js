@@ -2,8 +2,10 @@ import React from 'react';
 import { Container, Navbar, Form, Button, InputGroup } from 'react-bootstrap';
 import { FaBell, FaShoppingCart } from 'react-icons/fa';
 import TopNav from './TopNav';
+import {useNavigate } from "react-router-dom";
 
 const Header = () => {
+    const navigate = useNavigate();
     return (
         <header>
             {/* Top Navigation */}
@@ -12,7 +14,7 @@ const Header = () => {
             {/* Main Navigation */}
             <Navbar bg="white" expand="lg" className="py-2 border-bottom">
                 <Container>
-                    <Navbar.Brand href="#home">
+                    <Navbar.Brand onClick={() => navigate("/")}>
                         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/EBay_logo.svg/2560px-EBay_logo.svg.png" alt="eBay" height="40" />
                     </Navbar.Brand>
                     <div className="d-flex small text-muted mb-1">

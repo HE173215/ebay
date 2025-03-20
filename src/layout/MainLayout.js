@@ -1,7 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Row, Col, Button, Card } from 'react-bootstrap';
-import { FaHeart } from 'react-icons/fa';
+import {Container, Row, Col, Button, Card} from 'react-bootstrap';
+import {FaHeart} from 'react-icons/fa';
 import Header from './includes/Header';
 import SubMenu from './includes/SubMenu';
 import Footer from './includes/Footer';
@@ -9,14 +9,14 @@ import {Link} from "react-router-dom";
 import {useProduct} from "../context/ProductContext";
 
 const EbayHomepage = () => {
-    const { products, getImageUrl, formatPrice } = useProduct();
+    const {categories, getImageUrl} = useProduct();
     return (
         <div className="ebay-homepage">
             {/* Header (includes TopNav) */}
-            <Header />
+            <Header/>
 
             {/* Categories Navigation */}
-            <SubMenu />
+            <SubMenu/>
 
             {/* Hero Banner */}
             <div className="hero-banner bg-light text-white py-5 mb-4" style={{
@@ -41,21 +41,22 @@ const EbayHomepage = () => {
             {/* Popular Categories */}
             <Container className="mb-5">
                 <h2 className="mb-4">Explore Popular Categories</h2>
-                {products.map(product => (
-                    <Row key={product.id} className="mb-4">
-                        <Card className="h-100">
-                            <Link to={`/product/${product.id}`}>
-                                <Card.Img variant="top" src={getImageUrl(product.image)} />
+                <Row>
+                    {categories.map(category => (
+                        <Col key={category.id} xs={6} sm={4} md={3} lg={2} className="mb-4">
+                            <Link to={`/category/${category.id}`} className="text-decoration-none text-center">
+                                <div className="category-icon mb-2">
+                                    <img
+                                        src={category.image}
+                                        alt={category.name}
+                                        className="img-fluid rounded-circle"
+                                    />
+                                </div>
+                                <div className="category-name">{category.name}</div>
                             </Link>
-                            <Card.Body>
-                                <Link to={`/product/${product.id}`} className="text-decoration-none">
-                                    <Card.Title>{product.name}</Card.Title>
-                                </Link>
-                                <Card.Text>{formatPrice(product.price)}</Card.Text>
-                            </Card.Body>
-                        </Card>
-                    </Row>
-                ))}
+                        </Col>
+                    ))}
+                </Row>
             </Container>
 
             {/* Shopping Made Easy */}
@@ -63,7 +64,8 @@ const EbayHomepage = () => {
                 <Row className="bg-light p-3 rounded align-items-center">
                     <Col>
                         <h4>Shopping made easy</h4>
-                        <p className="small text-muted mb-0">Enjoy reliability, secure deliveries and hassle-free returns.</p>
+                        <p className="small text-muted mb-0">Enjoy reliability, secure deliveries and hassle-free
+                            returns.</p>
                     </Col>
                     <Col xs="auto">
                         <Button variant="dark" className="rounded-pill">Start now</Button>
@@ -87,11 +89,14 @@ const EbayHomepage = () => {
                         <Col key={item} xs={12} sm={6} md={4} lg={2} className="mb-4">
                             <Card className="h-100 border-0 position-relative">
                                 <div className="position-absolute end-0 p-2">
-                                    <FaHeart className="text-secondary" />
+                                    <FaHeart className="text-secondary"/>
                                 </div>
-                                <Card.Img variant="top" src={`https://via.placeholder.com/150x220?text=Textbook ${item}`} className="card-img-fixed-height" />
+                                <Card.Img variant="top"
+                                          src={`https://via.placeholder.com/150x220?text=Textbook ${item}`}
+                                          className="card-img-fixed-height"/>
                                 <Card.Body className="p-2">
-                                    <Card.Title className="small fw-normal">Textbook of Rheumatology, 12th Ed.</Card.Title>
+                                    <Card.Title className="small fw-normal">Textbook of Rheumatology, 12th
+                                        Ed.</Card.Title>
                                     <Card.Text className="fw-bold">
                                         {(Math.random() * 1000000).toFixed(2)} VND
                                     </Card.Text>
@@ -110,9 +115,9 @@ const EbayHomepage = () => {
                         <Col key={item} xs={12} sm={6} md={3} className="mb-4">
                             <Card className="h-100 border-0 position-relative">
                                 <div className="position-absolute end-0 p-2">
-                                    <FaHeart className="text-secondary" />
+                                    <FaHeart className="text-secondary"/>
                                 </div>
-                                <Card.Img variant="top" src={`https://via.placeholder.com/200x200?text=Item ${item}`} />
+                                <Card.Img variant="top" src={`https://via.placeholder.com/200x200?text=Item ${item}`}/>
                                 <Card.Body className="p-2">
                                     <Card.Title className="small fw-normal">Product Title Here</Card.Title>
                                     <Card.Text className="fw-bold">
@@ -126,21 +131,23 @@ const EbayHomepage = () => {
             </Container>
 
             {/* Footer */}
-            <Footer />
+            <Footer/>
 
             {/* Custom CSS */}
             <style jsx>{`
-        .category-circle {
-          transition: all 0.2s ease;
-        }
-        .category-circle:hover {
-          transform: scale(1.05);
-        }
-        .card-img-fixed-height {
-          height: 180px;
-          object-fit: cover;
-        }
-      `}</style>
+                .category-circle {
+                    transition: all 0.2s ease;
+                }
+
+                .category-circle:hover {
+                    transform: scale(1.05);
+                }
+
+                .card-img-fixed-height {
+                    height: 180px;
+                    object-fit: cover;
+                }
+            `}</style>
         </div>
     );
 };

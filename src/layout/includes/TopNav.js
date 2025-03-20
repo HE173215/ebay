@@ -1,20 +1,35 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
+import { useUser } from '../../context/UserContext';
+import { Link } from 'react-router-dom';
 
 const TopNav = () => {
+    const { currentUser, logout } = useUser();
+
+    const handleLogout = () => {
+        logout();
+    };
+
     return (
         <div className="bg-light py-1">
             <Container>
                 <Row className="align-items-center">
                     <Col>
-                        <small>Hi! Sign in or register</small>
+                        {currentUser ? (
+                            <small>
+                                Hi! {currentUser.username} |{' '}
+                                <Link to="/" onClick={handleLogout}>
+                                    Logout
+                                </Link>
+                            </small>
+                        ) : (
+                            <small>
+                                <Link to="/login">Sign in</Link> or{' '}
+                                <Link to="/register">register</Link>
+                            </small>
+                        )}
                     </Col>
-                    <Col className="text-end">
-                        <small className="me-3">Daily Deals</small>
-                        <small className="me-3">Brand Outlet</small>
-                        <small className="me-3">Gift Cards</small>
-                        <small className="me-3">Help & Contact</small>
-                    </Col>
+                    {/* Phần còn lại giữ nguyên */}
                 </Row>
             </Container>
         </div>

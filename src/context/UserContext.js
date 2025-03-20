@@ -41,9 +41,11 @@ export const UserProvider = ({ children }) => {
         if (user) {
             setCurrentUser(user);
             setIsAuthenticated(true);
+            saveUserToStorage(user);
             return user;
         } else {
-            setError('Tên đăng nhập hoặc mật khẩu không đúng');
+            const errorMessage = 'Tên đăng nhập hoặc mật khẩu không đúng';
+            setError(errorMessage);
             return null;
         }
     };
@@ -52,12 +54,74 @@ export const UserProvider = ({ children }) => {
     const logout = () => {
         setCurrentUser(null);
         setIsAuthenticated(false);
+        removeUserFromStorage();
     };
 
     // Lấy người dùng theo ID
     const getUserById = (userId) => {
         return users.find(user => user.id === userId) || null;
     };
+
+    // Lưu thông tin người dùng vào localStorage
+    const saveUserToStorage = (user) => {
+        try {
+            localStorage.setItem('user', JSON.stringify(user));
+        } catch (error) {
+            // Silent error handling
+        }
+    };
+
+    // Lấy thông tin người dùng từ localStorage
+    const getUserFromStorage = () => {
+        try {
+            const userString = localStorage.getItem('user');
+            return userString ? JSON.parse(userString) : null;
+        } catch (error) {
+            return null;
+        }
+    };
+
+    // Xóa thông tin người dùng khỏi localStorage
+    const removeUserFromStorage = () => {
+        try {
+            localStorage.removeItem('user');
+        } catch (error) {
+            // Silent error handling
+        }
+    };
+
+    // Hàm kiểm tra thông tin người dùng đã được lưu trữ sau khi đăng nhập chưa
+    const checkUserStorageAfterLogin = () => {
+        const storedUser = getUserFromStorage();
+
+        if (storedUser) {
+            // Kiểm tra xem thông tin người dùng trong localStorage có khớp với currentUser không
+            const isStorageConsistent = currentUser &&
+                storedUser.id === currentUser.id &&
+                storedUser.username === currentUser.username;
+
+            return {
+                isStored: true,
+                isConsistent: isStorageConsistent,
+                storedUser: storedUser
+            };
+        }
+
+        return {
+            isStored: false,
+            isConsistent: false,
+            storedUser: null
+        };
+    };
+
+    // Kiểm tra xem người dùng đã đăng nhập hay chưa khi component được mount
+    useEffect(() => {
+        const user = getUserFromStorage();
+        if (user) {
+            setCurrentUser(user);
+            setIsAuthenticated(true);
+        }
+    }, []);
 
     // Giá trị context để chia sẻ
     const contextValue = {
@@ -68,7 +132,8 @@ export const UserProvider = ({ children }) => {
         error,
         login,
         logout,
-        getUserById
+        getUserById,
+        checkUserStorageAfterLogin
     };
 
     return (
