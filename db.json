@@ -64,7 +64,7 @@
       "price": 250000,
       "image": "/images/download.jpg",
       "categoryId": 3,
-      "rating": 4.0,
+      "rating": 4,
       "stock": 200
     }
   ],
@@ -98,17 +98,33 @@
     {
       "userId": 1,
       "items": [
-        { "productId": 1, "quantity": 1 },
-        { "productId": 3, "quantity": 2 }
+        {
+          "productId": 1,
+          "quantity": 1
+        },
+        {
+          "productId": 3,
+          "quantity": 2
+        }
       ]
     },
     {
       "userId": 2,
-      "items": [{ "productId": 2, "quantity": 1 }]
+      "items": [
+        {
+          "productId": 2,
+          "quantity": 1
+        }
+      ]
     },
     {
       "userId": 4,
-      "items": [{ "productId": 4, "quantity": 1 }]
+      "items": [
+        {
+          "productId": 4,
+          "quantity": 1
+        }
+      ]
     }
   ],
   "reviews": [

@@ -8,6 +8,7 @@ import { ProductProvider } from './context/ProductContext';
 import { CartProvider } from './context/CartContext';
 import { UserProvider } from './context/UserContext';
 import Login from "./components/User/Login";
+import Register from "./components/User/Register";
 import UserProfile from "./components/User/UserProfile";
 import PrivateRoute from "./components/PrivateRoute";
 
@@ -23,6 +24,7 @@ function App() {
                                 <Route path="/product/:id" element={<ProductDetailPage />} />
                                 <Route path="/category/:id?" element={<CategoryPage />} />
                                 <Route path="/login" element={<Login />} />
+                                <Route path="/register" element={<Register />} />  {/* Thêm route Register */}
                                 <Route
                                     path="/profile"
                                     element={

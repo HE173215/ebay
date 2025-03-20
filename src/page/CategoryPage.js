@@ -1,20 +1,24 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useParams } from 'react-router-dom';
 import Header from '../layout/includes/Header';
 import SubMenu from '../layout/includes/SubMenu';
 import Footer from '../layout/includes/Footer';
-import { useProduct } from '../context/ProductContext'; // Adjust import path as needed
+import { useProduct } from '../context/ProductContext';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 
 const CategoryPage = () => {
+    const { id } = useParams(); // Lấy ID từ URL
     const { categories, getProductsByCategory, formatPrice, getImageUrl } = useProduct();
-    const [selectedCategory, setSelectedCategory] = useState(null);
 
-    // Get first category if no category selected
-    const currentCategory = selectedCategory
-        ? categories.find(cat => cat.id === selectedCategory)
+    // Chuyển đổi id sang số nếu có
+    const categoryId = id ? Number(id) : null;
+
+    // Tìm danh mục hiện tại
+    const currentCategory = categoryId
+        ? categories.find(cat => cat.id === categoryId)
         : categories[0];
 
-    // Get products for the current category
+    // Lấy sản phẩm của danh mục
     const categoryProducts = currentCategory
         ? getProductsByCategory(currentCategory.id)
         : [];
@@ -28,14 +32,14 @@ const CategoryPage = () => {
                     {/* Category Navigation Sidebar */}
                     <Col md={3} className="mb-4">
                         <Card>
-                            <Card.Header>Categories</Card.Header>
+                            <Card.Header>Danh mục</Card.Header>
                             <Card.Body className="p-0">
                                 {categories.map(category => (
                                     <Button
                                         key={category.id}
-                                        variant={selectedCategory === category.id ? 'primary' : 'light'}
+                                        variant={categoryId === category.id ? 'primary' : 'light'}
                                         className="w-100 text-start rounded-0"
-                                        onClick={() => setSelectedCategory(category.id)}
+                                        href={`/category/${category.id}`}
                                     >
                                         {category.name}
                                     </Button>
@@ -46,7 +50,7 @@ const CategoryPage = () => {
 
                     {/* Product Listing */}
                     <Col md={9}>
-                        <h1>{currentCategory?.name || 'Categories'}</h1>
+                        <h1>{currentCategory?.name || 'Danh mục'}</h1>
                         <p>{currentCategory?.description}</p>
 
                         <Row>
@@ -67,8 +71,11 @@ const CategoryPage = () => {
                                             <Card.Text className="text-muted">
                                                 {formatPrice(product.price)}
                                             </Card.Text>
-                                            <Button variant="outline-primary" href={`/product/${product.id}`}>
-                                                View Details
+                                            <Button
+                                                variant="outline-primary"
+                                                href={`/product/${product.id}`}
+                                            >
+                                                Xem chi tiết
                                             </Button>
                                         </Card.Body>
                                     </Card>
@@ -78,7 +85,7 @@ const CategoryPage = () => {
 
                         {categoryProducts.length === 0 && (
                             <div className="text-center text-muted mt-4">
-                                No products found in this category.
+                                Không có sản phẩm trong danh mục này.
                             </div>
                         )}
                     </Col>
