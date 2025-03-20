@@ -73,63 +73,6 @@ const EbayHomepage = () => {
                 </Row>
             </Container>
 
-            {/* Textbooks Section */}
-            <Container className="mb-5">
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                    <div>
-                        <h2 className="mb-0">Textbooks</h2>
-                        <p className="text-muted small">Recommended for you</p>
-                    </div>
-                    <div>
-                        <a href="#seeall" className="text-decoration-none">See all</a>
-                    </div>
-                </div>
-                <Row>
-                    {[1, 2, 3, 4, 5].map((item) => (
-                        <Col key={item} xs={12} sm={6} md={4} lg={2} className="mb-4">
-                            <Card className="h-100 border-0 position-relative">
-                                <div className="position-absolute end-0 p-2">
-                                    <FaHeart className="text-secondary"/>
-                                </div>
-                                <Card.Img variant="top"
-                                          src={`https://via.placeholder.com/150x220?text=Textbook ${item}`}
-                                          className="card-img-fixed-height"/>
-                                <Card.Body className="p-2">
-                                    <Card.Title className="small fw-normal">Textbook of Rheumatology, 12th
-                                        Ed.</Card.Title>
-                                    <Card.Text className="fw-bold">
-                                        {(Math.random() * 1000000).toFixed(2)} VND
-                                    </Card.Text>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    ))}
-                </Row>
-            </Container>
-
-            {/* Recently Viewed Items */}
-            <Container className="mb-5">
-                <h2 className="mb-4">Your Recently Viewed Items</h2>
-                <Row>
-                    {[1, 2].map((item) => (
-                        <Col key={item} xs={12} sm={6} md={3} className="mb-4">
-                            <Card className="h-100 border-0 position-relative">
-                                <div className="position-absolute end-0 p-2">
-                                    <FaHeart className="text-secondary"/>
-                                </div>
-                                <Card.Img variant="top" src={`https://via.placeholder.com/200x200?text=Item ${item}`}/>
-                                <Card.Body className="p-2">
-                                    <Card.Title className="small fw-normal">Product Title Here</Card.Title>
-                                    <Card.Text className="fw-bold">
-                                        {(Math.random() * 1000000).toFixed(2)} VND
-                                    </Card.Text>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    ))}
-                </Row>
-            </Container>
-
             {/* Footer */}
             <Footer/>
 

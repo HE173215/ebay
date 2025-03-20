@@ -11,6 +11,7 @@ import Login from "./components/User/Login";
 import Register from "./components/User/Register";
 import UserProfile from "./components/User/UserProfile";
 import PrivateRoute from "./components/PrivateRoute";
+import SearchResultsPage from "./page/SearchResultsPage";
 
 function App() {
     return (
@@ -24,7 +25,8 @@ function App() {
                                 <Route path="/product/:id" element={<ProductDetailPage />} />
                                 <Route path="/category/:id?" element={<CategoryPage />} />
                                 <Route path="/login" element={<Login />} />
-                                <Route path="/register" element={<Register />} />  {/* Thêm route Register */}
+                                <Route path="/register" element={<Register />} />
+                                <Route path="/search-results" element={<SearchResultsPage />} />
                                 <Route
                                     path="/profile"
                                     element={

@@ -66,6 +66,106 @@
       "categoryId": 3,
       "rating": 4,
       "stock": 200
+    },
+    {
+      "id": 6,
+      "name": "iPad Pro 12.9 inch",
+      "description": "Máy tính bảng mạnh mẽ với màn hình Liquid Retina XDR",
+      "price": 30000000,
+      "image": "/images/download.jpg",
+      "categoryId": 1,
+      "rating": 4.7,
+      "stock": 40
+    },
+    {
+      "id": 7,
+      "name": "Samsung Galaxy S21 Ultra",
+      "description": "Smartphone cao cấp với camera 108MP",
+      "price": 22000000,
+      "image": "/images/download.jpg",
+      "categoryId": 1,
+      "rating": 4.6,
+      "stock": 55
+    },
+    {
+      "id": 8,
+      "name": "Quần Jeans Levi's",
+      "description": "Quần jean nam chất liệu cao cấp",
+      "price": 1500000,
+      "image": "/images/download.jpg",
+      "categoryId": 2,
+      "rating": 4.3,
+      "stock": 80
+    },
+    {
+      "id": 9,
+      "name": "Áo khoác da",
+      "description": "Áo khoác da nam phong cách",
+      "price": 2500000,
+      "image": "/images/download.jpg",
+      "categoryId": 2,
+      "rating": 4.4,
+      "stock": 60
+    },
+    {
+      "id": 10,
+      "name": "Sách Lập trình Python",
+      "description": "Hướng dẫn toàn diện về lập trình Python",
+      "price": 350000,
+      "image": "/images/download.jpg",
+      "categoryId": 3,
+      "rating": 4.5,
+      "stock": 150
+    },
+    {
+      "id": 11,
+      "name": "Máy ảnh Canon EOS R5",
+      "description": "Máy ảnh mirrorless chuyên nghiệp độ phân giải cao",
+      "price": 85000000,
+      "image": "/images/download.jpg",
+      "categoryId": 1,
+      "rating": 4.9,
+      "stock": 20
+    },
+    {
+      "id": 12,
+      "name": "Tai nghe AirPods Pro",
+      "description": "Tai nghe không dây chống ồn của Apple",
+      "price": 5500000,
+      "image": "/images/download.jpg",
+      "categoryId": 1,
+      "rating": 4.7,
+      "stock": 100
+    },
+    {
+      "id": 13,
+      "name": "Áo sơ mi trắng",
+      "description": "Áo sơ mi nam công sở cao cấp",
+      "price": 500000,
+      "image": "/images/download.jpg",
+      "categoryId": 2,
+      "rating": 4.1,
+      "stock": 120
+    },
+    {
+      "id": 14,
+      "name": "Sneakers Adidas",
+      "description": "Giày thể thao năng động và thoải mái",
+      "price": 1800000,
+      "image": "/images/download.jpg",
+      "categoryId": 2,
+      "rating": 4.5,
+      "stock": 90
+    },
+    {
+      "id": 15,
+      "name": "Sách Kiến Trúc Phần Mềm",
+      "description": "Hướng dẫn thiết kế hệ thống phần mềm chuyên nghiệp",
+      "price": 450000,
+      "image": "/images/download.jpg",
+      "categoryId": 3,
+      "rating": 4.6,
+      "stock": 180
     }
   ],
   "users": [
